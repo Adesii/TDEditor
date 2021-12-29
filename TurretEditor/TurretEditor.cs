@@ -25,7 +25,7 @@ namespace TDEditor.Editors
 			CreateUI();
 		}
 
-		private void GetAllTurretComponents()
+		public void GetAllTurretComponents()
 		{
 			var BaseTurretType = TDWindow.LatestTerryDefense.GetType( "TerryDefense.components.turret.BaseTurretComponent" );
 			var EntityComponentBlackList = AppDomain.CurrentDomain.GetAssemblies()
@@ -68,7 +68,7 @@ namespace TDEditor.Editors
 			SearchBar.MinimumSize = new( 200, 30 );
 			SearchBar.TextChanged += ( text ) =>
 			{
-				if ( LastFilter > 0.05f )
+				if ( LastFilter > 0.075f )
 				{
 					list.Filter( text );
 					LastFilter = 0;

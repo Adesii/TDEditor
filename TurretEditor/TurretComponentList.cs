@@ -105,8 +105,23 @@ namespace TDEditor.Editors
 			components.Add( widget );
 		}
 
+
+		[Event( "TDHotload" )]
+		public void OnHotload()
+		{
+			parentEditor.GetAllTurretComponents();
+			Clear();
+			if ( CurrentFilter.Length > 0 )
+				Filter( CurrentFilter );
+			else
+				CreateUI();
+		}
+
+		string CurrentFilter = "";
+
 		internal void Filter( string text )
 		{
+			CurrentFilter = text;
 			if ( text.Length == 0 )
 			{
 				UpdatesEnabled = false;

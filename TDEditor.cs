@@ -113,6 +113,23 @@ namespace TDEditor
 			CreateUI();
 		}
 
+		RealTimeSince LastCheck;
+		[Event.Frame]
+		public void CheckHotload()
+		{
+			if ( LastCheck > 2 )
+			{
+				var lastAssembly = LatestTerryDefense;
+				LatestTerryDefense = GetAssemblyByName( "TerryDefense" );
+				if ( lastAssembly != LatestTerryDefense )
+				{
+					AssemblyDirty = true;
+					Event.Run( "TDHotload" );
+					AssemblyDirty = false;
+				}
+			}
+		}
+
 
 	}
 }
