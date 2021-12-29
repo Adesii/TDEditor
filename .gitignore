@@ -26,3 +26,7 @@ omnisharp.json
 *.vpcf_c
 *.fgd
 /data/extensions/sbox-asset-path/node_modules
+/Properties
+.vscode
+Properties
+obj
