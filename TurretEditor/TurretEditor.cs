@@ -52,7 +52,6 @@ namespace TDEditor.Editors
 			}
 		}
 
-		RealTimeSince LastFilter;
 		private void CreateUI()
 		{
 
@@ -60,20 +59,25 @@ namespace TDEditor.Editors
 			Widget LeftColumn = new( this );
 			BoxLayout LeftLayout = new( BoxLayout.Direction.TopToBottom, LeftColumn );
 
+			var TurretMenu = TDWindow.Instance.MenuBar.AddMenu( "Turret Editor" );
+
+			TurretMenu.AddOption( "New", "reload", () =>
+			{
+				TurretMainView.CurrentTurretInstance = new TurretInstance();
+				Event.Run( "turret_editor_reload", TurretMainView.CurrentTurretInstance );
+			} );
+
 			var list = new TurretComponentList( this );
 
 
-			var SearchBar = new LineEdit( LeftColumn );
-			SearchBar.PlaceholderText = "Search";
-			SearchBar.MinimumSize = new( 200, 30 );
-			SearchBar.TextChanged += ( text ) =>
+			var SearchBar = new LineEdit( LeftColumn )
 			{
-				if ( LastFilter > 0.075f )
-				{
-					list.Filter( text );
-					LastFilter = 0;
-
-				}
+				PlaceholderText = "Search",
+				MinimumSize = new( 200, 30 )
+			};
+			SearchBar.TextEdited += ( text ) =>
+			{
+				list.Filter( text );
 
 			};
 			LeftLayout.Add( SearchBar );
@@ -82,7 +86,7 @@ namespace TDEditor.Editors
 
 			CanvasLayout.Add( LeftColumn, 2 );
 
-			CanvasLayout.Add( new TurretMainView(), 10 );
+			CanvasLayout.Add( new TurretMainView( this ), 10 );
 		}
 	}
 }

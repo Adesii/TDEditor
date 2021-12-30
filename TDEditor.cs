@@ -127,6 +127,7 @@ namespace TDEditor
 					Event.Run( "TDHotload" );
 					AssemblyDirty = false;
 				}
+				LastCheck = 0;
 			}
 		}
 

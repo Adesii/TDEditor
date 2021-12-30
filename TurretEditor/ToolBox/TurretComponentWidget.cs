@@ -13,10 +13,15 @@ namespace TDEditor.Editors
 
 		public Color SelectionOutline = Color.Parse( "#3ccde7" ) ?? default;
 
-		Label Title;
-		public string ComponentName => Title.Text;
+		public Label Title;
+
+		Type ComponentType;
+		List<PropertyInfo> ComponentProperties;
+
 		public TurretComponentWidget( Widget parent, Type type, List<PropertyInfo> Properties ) : base( parent )
 		{
+			ComponentType = type;
+			ComponentProperties = Properties;
 
 			BoxLayout lay = new BoxLayout( BoxLayout.Direction.TopToBottom, this );
 
@@ -107,10 +112,14 @@ namespace TDEditor.Editors
 				Paint.DrawRect( rect, 4.0f );
 			}
 		}
+
 		protected override void OnDoubleClick( MouseEvent e )
 		{
 			base.OnDoubleClick( e );
 			Log.Error( "Adding Component: " + Title.Text );
+			if ( TurretMainView.CurrentTurretInstance?.Components == null )
+				TurretMainView.CurrentTurretInstance.Components = new();
+			TurretMainView.CurrentTurretInstance?.Components.Add( ComponentType, ComponentProperties );
 		}
 	}
 }
