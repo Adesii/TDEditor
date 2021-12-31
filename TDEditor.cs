@@ -111,6 +111,7 @@ namespace TDEditor
 		public void OnHotload()
 		{
 			CreateUI();
+			Event.Run( "turret_editor_reload" );
 		}
 
 		RealTimeSince LastCheck;
@@ -124,7 +125,7 @@ namespace TDEditor
 				if ( lastAssembly != LatestTerryDefense )
 				{
 					AssemblyDirty = true;
-					Event.Run( "TDHotload" );
+					Event.Run( "turret_editor_reload" );
 					AssemblyDirty = false;
 				}
 				LastCheck = 0;

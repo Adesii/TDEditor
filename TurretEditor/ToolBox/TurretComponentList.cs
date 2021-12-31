@@ -12,7 +12,7 @@ namespace TDEditor.Editors
 	{
 		TurretEditor parentEditor;
 
-		List<TurretComponentWidget> components = new();
+		List<GraphicsWidget> components = new();
 		public TurretComponentList( TurretEditor ParentEditor )
 		{
 
@@ -59,8 +59,12 @@ namespace TDEditor.Editors
 			components = new();
 			foreach ( var item in TurretEditor.TurretProperties )
 			{
-				var comp = new TurretComponentWidget( null, item.Key, item.Value );
-				components.Add( comp );
+				if ( TurretMainView.CurrentTurretInstance?.Components.ContainsKey( item.Key ) ?? false )
+				{
+					Log.Info( $"{item.Key} is in the turret" );
+					continue;
+				}
+				var comp = new TurretComponentWidget( this, item.Key, Activator.CreateInstance( item.Key ) );
 				var idk = new GraphicsWidget( comp )
 				{
 					Size = new Vector2( 300, 100 )
@@ -68,6 +72,7 @@ namespace TDEditor.Editors
 
 				idk.HoverEvents = true;
 
+				components.Add( idk );
 				Add( idk );
 				idk.Position = new Vector2( 0, (commulativey) );
 
@@ -78,12 +83,15 @@ namespace TDEditor.Editors
 			}
 		}
 
+
 		public void Clear()
 		{
 			commulativey = 0;
+			LastWidget = null;
 			foreach ( var item in components )
 			{
-				item?.Destroy();
+				if ( item?.IsValid ?? false )
+					item?.Destroy();
 			}
 		}
 
@@ -102,19 +110,27 @@ namespace TDEditor.Editors
 
 			commulativey += idk.Size.y + 10;
 
-			components.Add( widget );
+			components.Add( idk );
 		}
-
-
-		[Event( "TDHotload" )]
+		[Event.Hotload]
 		public void OnHotload()
 		{
-			parentEditor.GetAllTurretComponents();
+			if ( TDWindow.AssemblyDirty )
+				parentEditor.GetAllTurretComponents();
 			Clear();
 			if ( CurrentFilter.Length > 0 )
 				Filter( CurrentFilter );
 			else
 				CreateUI();
+
+
+		}
+		public void RefreshComponentList()
+		{
+			UpdatesEnabled = false;
+			Clear();
+			CreateUI();
+			UpdatesEnabled = true;
 		}
 
 		string CurrentFilter = "";
@@ -137,7 +153,7 @@ namespace TDEditor.Editors
 				foreach ( var item in TurretEditor.TurretProperties.Where( e => e.Key.Name.ToLower().Contains( text.ToLower() ) ) )
 				{
 					Log.Info( item.Key.Name );
-					AddChild( new TurretComponentWidget( null, item.Key, item.Value ) );
+					AddChild( new TurretComponentWidget( this, item.Key, item.Value ) );
 				}
 				UpdatesEnabled = true;
 

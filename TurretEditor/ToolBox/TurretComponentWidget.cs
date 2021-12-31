@@ -16,28 +16,47 @@ namespace TDEditor.Editors
 		public Label Title;
 
 		Type ComponentType;
-		List<PropertyInfo> ComponentProperties;
 
-		public TurretComponentWidget( Widget parent, Type type, List<PropertyInfo> Properties ) : base( parent )
+		protected object PropertyObject;
+		List<PropertyInfo> ComponentProperties;
+		TurretComponentList TurretComponentList;
+		public TurretComponentWidget( TurretComponentList parent, Type type, object Properties, Widget RealParent = null ) : base( RealParent )
 		{
 			ComponentType = type;
-			ComponentProperties = Properties;
+			PropertyObject = Properties;
+			ComponentProperties = TurretEditor.TurretProperties[type];
+			TurretComponentList = parent;
+
+			CreateUI( type, ComponentProperties );
+		}
+
+		public virtual void CreateUI( Type type, List<PropertyInfo> Properties )
+		{
+
+
 
 			BoxLayout lay = new BoxLayout( BoxLayout.Direction.TopToBottom, this );
 
 			Title = new Label( this )
 			{
-				Text = type.Name.PadLeft( 53 )
+				Text = type.Name,
+
 			};
 			lay.AddSpacingCell( 5 );
 			lay.Add( Title );
+			Title.SetStylesheetFile( "/teststyle.css" );
+
 			lay.AddSpacingCell( 20 );
+
+			Widget AddButton = new( this );
+			AddButton.Position = new Vector2( 0, 0 );
+			AddButton.Size = new( 50, 50 );
 
 			var PropertyList = new Widget( this );
 			lay.Add( PropertyList, 1 );
 
 			BoxLayout props = new BoxLayout( BoxLayout.Direction.TopToBottom, PropertyList );
-			var instance = Activator.CreateInstance( type );
+
 
 			int commulativey = 0;
 			foreach ( var item in Properties.Reverse<PropertyInfo>() )
@@ -50,11 +69,9 @@ namespace TDEditor.Editors
 					WordWrap = true
 				};
 				proplaybe.MaximumSize = new( Size.x / 5, 500 );
-				Label propValue = new Label( PropertyList )
-				{
-					Text = (item.GetGetMethod().ReturnType.ToString().Replace( "System.", "" ) + ": " + item.GetValue( instance ).ToString() ?? "null").ToTitleCase(),
-					WordWrap = true
-				};
+				Label propValue = new Label( PropertyList );
+				//Log.Error( item.GetValue( PropertyObject ) );
+				propValue.Text = item.GetValue( PropertyObject )?.ToString();
 				propValue.MaximumSize = new( Size.x / 5, 500 );
 				prop.AddSpacingCell( 20 );
 
@@ -67,6 +84,13 @@ namespace TDEditor.Editors
 			}
 			props.AddSpacingCell( 10 );
 			MinimumSize = new( 0, commulativey );
+
+
+
+
+
+
+
 		}
 
 		bool hovered;
@@ -119,7 +143,10 @@ namespace TDEditor.Editors
 			Log.Error( "Adding Component: " + Title.Text );
 			if ( TurretMainView.CurrentTurretInstance?.Components == null )
 				TurretMainView.CurrentTurretInstance.Components = new();
-			TurretMainView.CurrentTurretInstance?.Components.Add( ComponentType, ComponentProperties );
+			TurretMainView.CurrentTurretInstance?.Components.Add( ComponentType, PropertyObject );
+
+			TurretComponentList.RefreshComponentList();
+
 		}
 	}
 }

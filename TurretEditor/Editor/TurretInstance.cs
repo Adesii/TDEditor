@@ -16,6 +16,7 @@ namespace TDEditor.Editors
 			Id = Guid.NewGuid();
 		}
 
-		public ObservableDictionary<Type, List<PropertyInfo>> Components = new();
+		public ObservableDictionary<Type, object> Components = new();
+
 	}
 }

@@ -14,22 +14,17 @@ namespace TDEditor.Editors
 {
 	public class TurretTreeView : ScrollArea
 	{
-		public TurretInstance CurrentTurretInstance;
 
 		List<TurretComponentWidget> ComponentNodes = new();
 
 		BoxLayout layout;
 		public TurretTreeView( Widget parent = null ) : base( parent )
 		{
-			Canvas = new( Parent );
-			layout = new( BoxLayout.Direction.TopToBottom, Canvas );
-			layout.Spacing = 20;
-
-			CurrentTurretInstance = TurretMainView.CurrentTurretInstance;
+			Canvas = new( parent );
+			NewInstance();
 
 			SetSizeMode( SizeMode.CanGrow, SizeMode.CanGrow );
 			VerticalScrollbarMode = ScrollbarMode.On;
-			Log.Error( Size );
 
 			//MinimumSize = new Vector2( 300, 200 );
 			//MaximumSize = new Vector2( 200000, 200000 );
@@ -54,27 +49,27 @@ namespace TDEditor.Editors
 			}
 			LastWidget?.Update();
 		}
-		[Event( "turret_editor_reload" )]
-		public void NewInstance( TurretInstance instance )
+		TurretInstance oldInstance;
+		[Event.Hotload, Event( "turret_editor_reload" )]
+		public void NewInstance()
 		{
-			Clear();
-			if ( CurrentTurretInstance != null )
+			if ( oldInstance != null )
 			{
-				CurrentTurretInstance.Components.CollectionChanged -= HandleChanges;
+				oldInstance.Components.CollectionChanged -= HandleChanges;
 			}
-			CurrentTurretInstance = instance;
-			CurrentTurretInstance.Components.CollectionChanged += HandleChanges;
+			oldInstance = TurretMainView.CurrentTurretInstance;
+			if ( oldInstance != null )
+			{
+				oldInstance.Components.CollectionChanged += HandleChanges;
+			}
+
+			CreateUI();
 		}
 		public void HandleChanges( object? sender, NotifyCollectionChangedEventArgs e )
 		{
-			if ( e.Action == NotifyCollectionChangedAction.Add )
-			{
-				foreach ( KeyValuePair<Type, List<PropertyInfo>> item in e.NewItems )
-				{
-					AddChild( item.Key, item.Value );
-				}
-			}
-
+			UpdatesEnabled = false;
+			CreateUI();
+			UpdatesEnabled = true;
 		}
 		protected override void OnMouseLeave()
 		{
@@ -90,11 +85,12 @@ namespace TDEditor.Editors
 			Clear();
 
 			ComponentNodes = new();
-			if ( CurrentTurretInstance == null || CurrentTurretInstance.Components == null )
+			if ( TurretMainView.CurrentTurretInstance == null || TurretMainView.CurrentTurretInstance.Components == null )
 			{
+				Log.Error( "TurretTreeView.CreateUI: CurrentTurretInstance is null" );
 				return;
 			}
-			foreach ( var item in CurrentTurretInstance?.Components )
+			foreach ( var item in TurretMainView.CurrentTurretInstance?.Components )
 			{
 				AddChild( item.Key, item.Value );
 			}
@@ -106,15 +102,15 @@ namespace TDEditor.Editors
 			{
 				item?.Destroy();
 			}
-			Canvas?.Destroy();
-			Canvas = new( Parent );
-			layout = new( BoxLayout.Direction.TopToBottom, Canvas );
+			if ( !layout?.IsValid ?? true )
+				layout = new( BoxLayout.Direction.TopToBottom, Canvas );
+			layout.Spacing = 20;
 		}
 
-		public void AddChild( Type type, List<PropertyInfo> properties )
+		public void AddChild( Type type, object properties )
 		{
 
-			var comp = new TurretComponentWidget( null, type, properties );
+			var comp = new TurretComponentWidgetEditable( null, type, properties );
 			comp.SetSizeMode( SizeMode.CanGrow, SizeMode.CanShrink );
 			//comp.Title.Text = comp.Title.Text.PadLeft( (int)(Canvas.Size.x * 2.5f) );
 

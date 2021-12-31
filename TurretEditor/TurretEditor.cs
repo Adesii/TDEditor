@@ -61,13 +61,14 @@ namespace TDEditor.Editors
 
 			var TurretMenu = TDWindow.Instance.MenuBar.AddMenu( "Turret Editor" );
 
+			var list = new TurretComponentList( this );
 			TurretMenu.AddOption( "New", "reload", () =>
 			{
 				TurretMainView.CurrentTurretInstance = new TurretInstance();
-				Event.Run( "turret_editor_reload", TurretMainView.CurrentTurretInstance );
+				Event.Run( "turret_editor_reload" );
+				list.RefreshComponentList();
 			} );
 
-			var list = new TurretComponentList( this );
 
 
 			var SearchBar = new LineEdit( LeftColumn )

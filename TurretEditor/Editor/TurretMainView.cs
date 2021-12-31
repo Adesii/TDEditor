@@ -12,14 +12,16 @@ namespace TDEditor.Editors
 		{
 			CreateUI();
 		}
+		BoxLayout MainViewLayout;
 
-
+		[Event( "turret_editor_reload" )]
 		public void CreateUI()
 		{
+			Clear();
 			if ( CurrentTurretInstance == null )
 				CurrentTurretInstance = new TurretInstance();
-
-			BoxLayout MainViewLayout = new( BoxLayout.Direction.TopToBottom, this );
+			if ( MainViewLayout == null )
+				MainViewLayout = new( BoxLayout.Direction.TopToBottom, this );
 			Widget TopRow = new( this );
 			MainViewLayout.Add( TopRow, 1 );
 
@@ -34,11 +36,25 @@ namespace TDEditor.Editors
 				Row.Add( PropertyName, 1 );
 				LineEdit lineEdit = new( item.GetValue( CurrentTurretInstance )?.ToString(), RowObject );
 				lineEdit.DataBinding = new PropertyBind( CurrentTurretInstance, item );
+				lineEdit.PullFromBinding();
+				lineEdit.TextEdited += ( sender ) =>
+				{
+					item.SetValue( CurrentTurretInstance, sender );
+
+				};
 				Row.Add( lineEdit, 1 );
 			}
 			TurretTreeView TurretTreeView = new( this );
 			MainViewLayout.Add( TurretTreeView, 3 );
 
+		}
+
+		private void Clear()
+		{
+			foreach ( var item in Children )
+			{
+				item?.Destroy();
+			}
 		}
 	}
 }
