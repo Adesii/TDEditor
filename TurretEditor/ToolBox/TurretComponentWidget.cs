@@ -15,11 +15,11 @@ namespace TDEditor.Editors
 
 		public Label Title;
 
-		Type ComponentType;
+		protected Type ComponentType;
 
 		protected object PropertyObject;
 		List<PropertyInfo> ComponentProperties;
-		TurretComponentList TurretComponentList;
+		protected TurretComponentList TurretComponentList;
 		public TurretComponentWidget( TurretComponentList parent, Type type, object Properties, Widget RealParent = null ) : base( RealParent )
 		{
 			ComponentType = type;
@@ -35,7 +35,7 @@ namespace TDEditor.Editors
 
 
 
-			BoxLayout lay = new BoxLayout( BoxLayout.Direction.TopToBottom, this );
+			BoxLayout lay = MakeTopToBottom();
 
 			Title = new Label( this )
 			{
@@ -55,14 +55,14 @@ namespace TDEditor.Editors
 			var PropertyList = new Widget( this );
 			lay.Add( PropertyList, 1 );
 
-			BoxLayout props = new BoxLayout( BoxLayout.Direction.TopToBottom, PropertyList );
+			BoxLayout props = PropertyList.MakeTopToBottom();
 
 
 			int commulativey = 0;
 			foreach ( var item in Properties.Reverse<PropertyInfo>() )
 			{
 				Widget PropertyRow = new Widget( PropertyList );
-				BoxLayout prop = new BoxLayout( BoxLayout.Direction.LeftToRight, PropertyRow );
+				BoxLayout prop = PropertyRow.MakeLeftToRight();
 				Label proplaybe = new Label( PropertyList )
 				{
 					Text = item.Name.ToTitleCase(),

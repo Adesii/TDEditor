@@ -67,9 +67,9 @@ namespace TDEditor.Editors
 		}
 		public void HandleChanges( object? sender, NotifyCollectionChangedEventArgs e )
 		{
-			UpdatesEnabled = false;
+			//UpdatesEnabled = false;
 			CreateUI();
-			UpdatesEnabled = true;
+			//UpdatesEnabled = true;
 		}
 		protected override void OnMouseLeave()
 		{
@@ -103,7 +103,7 @@ namespace TDEditor.Editors
 				item?.Destroy();
 			}
 			if ( !layout?.IsValid ?? true )
-				layout = new( BoxLayout.Direction.TopToBottom, Canvas );
+				layout = Canvas.MakeTopToBottom();
 			layout.Spacing = 20;
 		}
 

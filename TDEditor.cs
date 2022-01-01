@@ -16,6 +16,7 @@ namespace TDEditor
 		public static TDWindow Instance;
 
 		public static Assembly LatestTerryDefense;
+		public static BaseFileSystem TerryDefenseAddon = FileSystem.Root.CreateSubSystem( "/addons/terrydefense" );
 		public static bool AssemblyDirty = true;
 
 		BoxLayout TabView;

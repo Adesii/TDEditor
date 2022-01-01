@@ -21,17 +21,18 @@ namespace TDEditor.Editors
 			if ( CurrentTurretInstance == null )
 				CurrentTurretInstance = new TurretInstance();
 			if ( MainViewLayout == null )
-				MainViewLayout = new( BoxLayout.Direction.TopToBottom, this );
+				MainViewLayout = MakeTopToBottom();
 			Widget TopRow = new( this );
 			MainViewLayout.Add( TopRow, 1 );
 
-			BoxLayout TopRowLayout = new( BoxLayout.Direction.TopToBottom, TopRow );
+			BoxLayout TopRowLayout = TopRow.MakeTopToBottom();
 
 			foreach ( var item in Reflection.GetProperties( CurrentTurretInstance ) )
 			{
+				if ( item.PropertyType.IsGenericType ) continue;
 				Widget RowObject = new( TopRow );
 				TopRowLayout.Add( RowObject, 1 );
-				BoxLayout Row = new( BoxLayout.Direction.LeftToRight, RowObject );
+				BoxLayout Row = RowObject.MakeLeftToRight();
 				Label PropertyName = new( "\t\t" + item.Name.ToTitleCase(), RowObject );
 				Row.Add( PropertyName, 1 );
 				LineEdit lineEdit = new( item.GetValue( CurrentTurretInstance )?.ToString(), RowObject );

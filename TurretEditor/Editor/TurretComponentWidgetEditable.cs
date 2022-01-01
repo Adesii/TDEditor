@@ -18,7 +18,7 @@ namespace TDEditor.Editors
 		public override void CreateUI( Type type, List<PropertyInfo> Properties )
 		{
 			PropertyObject = TurretMainView.CurrentTurretInstance.Components[type];
-			BoxLayout lay = new BoxLayout( BoxLayout.Direction.TopToBottom, this );
+			BoxLayout lay = MakeTopToBottom();
 
 			Title = new Label( this )
 			{
@@ -38,14 +38,14 @@ namespace TDEditor.Editors
 			var PropertyList = new Widget( this );
 			lay.Add( PropertyList, 1 );
 
-			BoxLayout props = new BoxLayout( BoxLayout.Direction.TopToBottom, PropertyList );
+			BoxLayout props = PropertyList.MakeTopToBottom();
 
 
 			int commulativey = 0;
 			foreach ( var item in Properties.Reverse<PropertyInfo>() )
 			{
 				Widget PropertyRow = new( PropertyList );
-				BoxLayout prop = new( BoxLayout.Direction.LeftToRight, PropertyRow );
+				BoxLayout prop = PropertyRow.MakeLeftToRight();
 				Label proplaybe = new( PropertyList )
 				{
 					Text = item.Name.ToTitleCase(),
@@ -74,6 +74,13 @@ namespace TDEditor.Editors
 		}
 		protected override void OnDoubleClick( MouseEvent e )
 		{
+			base.OnDoubleClick( e );
+
+			if ( TurretMainView.CurrentTurretInstance?.Components == null )
+				TurretMainView.CurrentTurretInstance.Components = new();
+			TurretMainView.CurrentTurretInstance?.Components.Remove( ComponentType );
+
+			TurretComponentList.RefreshComponentList();
 
 		}
 

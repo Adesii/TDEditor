@@ -15,6 +15,8 @@ namespace TDEditor.Editors
 
 		public static Dictionary<Type, List<PropertyInfo>> TurretProperties = new();
 
+		public static PropertyInfo[] EntityComponentBlackList;
+
 
 
 		public TurretEditor( Widget parent ) : base( parent )
@@ -28,7 +30,7 @@ namespace TDEditor.Editors
 		public void GetAllTurretComponents()
 		{
 			var BaseTurretType = TDWindow.LatestTerryDefense.GetType( "TerryDefense.components.turret.BaseTurretComponent" );
-			var EntityComponentBlackList = AppDomain.CurrentDomain.GetAssemblies()
+			EntityComponentBlackList = AppDomain.CurrentDomain.GetAssemblies()
 														.Where( ( e ) => e.GetName().Name == "Sandbox.Game" )
 														.Last()
 														.GetType( "Sandbox.EntityComponent" )
@@ -55,9 +57,9 @@ namespace TDEditor.Editors
 		private void CreateUI()
 		{
 
-			BoxLayout CanvasLayout = new( BoxLayout.Direction.LeftToRight, this );
+			BoxLayout CanvasLayout = MakeLeftToRight();
 			Widget LeftColumn = new( this );
-			BoxLayout LeftLayout = new( BoxLayout.Direction.TopToBottom, LeftColumn );
+			BoxLayout LeftLayout = LeftColumn.MakeTopToBottom();
 
 			var TurretMenu = TDWindow.Instance.MenuBar.AddMenu( "Turret Editor" );
 
@@ -66,6 +68,16 @@ namespace TDEditor.Editors
 			{
 				TurretMainView.CurrentTurretInstance = new TurretInstance();
 				Event.Run( "turret_editor_reload" );
+				list.RefreshComponentList();
+			} );
+			TurretMenu.AddOption( "Save", "reload", () =>
+			{
+				TurretMainView.CurrentTurretInstance.Save();
+				list.RefreshComponentList();
+			} );
+			TurretMenu.AddOption( "Load", "reload", () =>
+			{
+				TurretMainView.CurrentTurretInstance.Load();
 				list.RefreshComponentList();
 			} );
 
