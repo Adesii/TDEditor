@@ -71,7 +71,15 @@ namespace TDEditor.Editors
 				proplaybe.MaximumSize = new( Size.x / 5, 500 );
 				Label propValue = new Label( PropertyList );
 				//Log.Error( item.GetValue( PropertyObject ) );
-				propValue.Text = item.GetValue( PropertyObject )?.ToString();
+				try
+				{
+					propValue.Text = item.GetValue( PropertyObject )?.ToString() ?? "null";
+
+				}
+				catch ( System.Exception )
+				{
+					propValue.Text = "null";
+				}
 				propValue.MaximumSize = new( Size.x / 5, 500 );
 				prop.AddSpacingCell( 20 );
 

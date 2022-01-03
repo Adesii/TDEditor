@@ -46,7 +46,7 @@ namespace TDEditor.Editors
 				List<PropertyInfo> propertiesList = new();
 				foreach ( var properties in item.GetType().GetProperties() )
 				{
-					if ( !EntityComponentBlackList.Any( ( e ) => e.Name == properties.Name ) )
+					if ( !EntityComponentBlackList.Where( e => e.Name == properties.Name ).Any() )
 						propertiesList.Add( properties );
 				}
 

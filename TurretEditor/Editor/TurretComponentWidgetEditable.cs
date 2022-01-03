@@ -12,6 +12,7 @@ namespace TDEditor.Editors
 	{
 		public TurretComponentWidgetEditable( TurretComponentList parent, Type type, object Properties, Widget RealParent = null ) : base( parent, type, Properties, RealParent )
 		{
+			TurretComponentList = parent;
 			PropertyObject = Properties;
 		}
 
@@ -74,13 +75,11 @@ namespace TDEditor.Editors
 		}
 		protected override void OnDoubleClick( MouseEvent e )
 		{
-			base.OnDoubleClick( e );
-
 			if ( TurretMainView.CurrentTurretInstance?.Components == null )
 				TurretMainView.CurrentTurretInstance.Components = new();
 			TurretMainView.CurrentTurretInstance?.Components.Remove( ComponentType );
 
-			TurretComponentList.RefreshComponentList();
+			Event.Run( "refresh_turret_components" );
 
 		}
 
@@ -94,6 +93,14 @@ namespace TDEditor.Editors
 				{
 					DataBinding = new PropertyBind( PropertyObject, property ),
 					State = (bool)property.GetValue( PropertyObject ) ? CheckState.On : CheckState.Off
+				};
+			}
+			else if ( type?.IsEnum ?? false )
+			{
+				return new EnumBox( this, type )
+				{
+					DataBinding = new PropertyBind( PropertyObject, property ),
+					CurrentIndex = (int)property.GetValue( PropertyObject )
 				};
 			}
 			else if ( type == typeof( Vector3 ) || type == typeof( Vector2 ) )
@@ -179,7 +186,7 @@ namespace TDEditor.Editors
 				var le = new LineEdit( this )
 				{
 					DataBinding = new PropertyBind( PropertyObject, property ),
-					Text = property.GetValue( PropertyObject )?.ToString()
+					Text = property?.GetValue( PropertyObject )?.ToString() ?? "null"
 				};
 				le.TextEdited += ( se ) =>
 				{

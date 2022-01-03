@@ -125,6 +125,7 @@ namespace TDEditor.Editors
 
 
 		}
+		[Event( "refresh_turret_components" )]
 		public void RefreshComponentList()
 		{
 			UpdatesEnabled = false;
