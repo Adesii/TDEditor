@@ -73,7 +73,10 @@ namespace TDEditor.Editors
 					{
 						if ( property.Name == SavedProperty.Key )
 						{
-							property.SetValue( instanceComponent, SavedProperty.Value );
+							if ( property.PropertyType.IsEnum )
+								property.SetValue( instanceComponent, Enum.Parse( property.PropertyType, SavedProperty.Value.ToString() ) );
+							else
+								property.SetValue( instanceComponent, SavedProperty.Value );
 						}
 					}
 				}

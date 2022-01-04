@@ -109,13 +109,20 @@ namespace TDEditor.Editors
 
 		public void AddChild( Type type, object properties )
 		{
+			try
+			{
+				var comp = new TurretComponentWidgetEditable( null, type, properties );
+				comp.SetSizeMode( SizeMode.CanGrow, SizeMode.CanShrink );
+				//comp.Title.Text = comp.Title.Text.PadLeft( (int)(Canvas.Size.x * 2.5f) );
 
-			var comp = new TurretComponentWidgetEditable( null, type, properties );
-			comp.SetSizeMode( SizeMode.CanGrow, SizeMode.CanShrink );
-			//comp.Title.Text = comp.Title.Text.PadLeft( (int)(Canvas.Size.x * 2.5f) );
+				ComponentNodes.Add( comp );
+				layout.Add( comp );
+			}
+			catch ( System.Exception )
+			{
 
-			ComponentNodes.Add( comp );
-			layout.Add( comp );
+			}
+
 		}
 	}
 

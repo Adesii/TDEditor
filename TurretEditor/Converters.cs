@@ -113,6 +113,9 @@ public class DictionaryStringObjectJsonConverter : JsonConverter<Dictionary<stri
 				HandleValue( writer, propertyInfo.Name, propertyInfo.GetValue( TurretMainView.CurrentTurretInstance.SerializableComponents[CurrentComponentKey] ) );
 				//writer.WriteEndObject();
 				break;
+			case Enum enumValue:
+				writer.WriteStringValue( enumValue.ToString() );
+				break;
 			default:
 				writer.WriteNullValue();
 				break;
@@ -145,7 +148,7 @@ public class DictionaryStringObjectJsonConverter : JsonConverter<Dictionary<stri
 				{
 					return result;
 				}
-				return reader.GetDecimal();
+				return reader.GetSingle();
 			case JsonTokenType.StartObject:
 				return Read( ref reader, null, options );
 			case JsonTokenType.StartArray:
