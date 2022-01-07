@@ -49,7 +49,9 @@ namespace TDEditor.Editors
 			SaveLocation = $"data/Turrets/{Name.ToLower()}.turret"; //TODO: Find a way to open the File Dialog
 			if ( !TDAddon.DirectoryExists( "data/Turrets" ) )
 				TDAddon.CreateDirectory( "data/Turrets" );
-			JsonSerializer.Serialize( TDAddon.OpenWrite( SaveLocation ), this, new JsonSerializerOptions { WriteIndented = true } );
+			var stream = TDAddon.OpenWrite( SaveLocation );
+			JsonSerializer.Serialize( stream, this, new JsonSerializerOptions { WriteIndented = true } );
+			stream.Close();
 		}
 
 		public void Load()

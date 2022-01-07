@@ -22,8 +22,8 @@ namespace TDEditor.Editors
 		public TurretEditor( Widget parent ) : base( parent )
 		{
 
-			if ( TDWindow.AssemblyDirty )
-				GetAllTurretComponents();
+
+			GetAllTurretComponents();
 			CreateUI();
 		}
 
