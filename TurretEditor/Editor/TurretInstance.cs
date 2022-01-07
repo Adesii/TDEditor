@@ -24,7 +24,11 @@ namespace TDEditor.Editors
 			Components.CollectionChanged += HandleChanges;
 		}
 
-
+		/// <summary>
+		/// 	This is the list of components that make up the turret.
+		/// 	<br>Key: Component Type</br>
+		/// 	<br>Value: Instance of Component</br>
+		/// </summary>
 		public ObservableDictionary<Type, object> Components = new();
 		[JsonConverter( typeof( DictionaryStringObjectJsonConverter ) )]
 		public Dictionary<string, object> SerializableComponents { get; set; } = new();
@@ -82,6 +86,7 @@ namespace TDEditor.Editors
 				}
 				Components.Add( instanceComponent.GetType(), instanceComponent );
 			}
+			Event.Run( "turret_editor_reload" );
 		}
 	}
 

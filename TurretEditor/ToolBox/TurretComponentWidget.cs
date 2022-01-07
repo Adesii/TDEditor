@@ -155,6 +155,8 @@ namespace TDEditor.Editors
 
 			TurretComponentList.RefreshComponentList();
 
+			Event.Run( "turret_editor_reload" );
+
 		}
 	}
 }
