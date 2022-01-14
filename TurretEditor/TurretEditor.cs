@@ -77,8 +77,17 @@ namespace TDEditor.Editors
 			} );
 			TurretMenu.AddOption( "Load", "reload", () =>
 			{
-				TurretMainView.CurrentTurretInstance.Load();
-				list.RefreshComponentList();
+				//TurretMainView.CurrentTurretInstance.Load();
+				//list.RefreshComponentList();
+
+				FileDialog fd = new( null );
+				fd.Title = "Load Turret";
+				fd.SetNameFilter( "Turret Files (*.turret) | *.turret" );
+				if ( fd.Execute() )
+				{
+					TurretMainView.CurrentTurretInstance.Load( fd.SelectedFile );
+					list.RefreshComponentList();
+				}
 			} );
 
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Sandbox;
@@ -54,15 +55,13 @@ namespace TDEditor.Editors
 			stream.Close();
 		}
 
-		public void Load()
+		public void Load( string TurretFile )
 		{
-			SaveLocation = $"data/Turrets/{Name.ToLower()}.turret";
-
-			if ( !TDAddon.FileExists( SaveLocation ) )
-			{
-				Save();
-			}
-			var turret = TDAddon.ReadJson<TurretInstance>( SaveLocation );
+			Log.Info( "Loading Turret: " + TurretFile );
+			SaveLocation = $"data/Turrets/{Path.GetFileNameWithoutExtension( TurretFile ).ToLower()}.turret";
+			var turret = JsonSerializer.Deserialize<TurretInstance>( File.ReadAllText( TurretFile ) );
+			Name = turret.Name;
+			Description = turret.Description;
 			//Log.Info( $"Loaded Turret: {turret.Name}" );
 			//Log.Info( $"Loaded Turret: {turret.Description}" );
 			//Log.Info( $"Loaded Turret: {turret.SerializableComponents?.Count}" );

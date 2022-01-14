@@ -102,10 +102,10 @@ namespace TDEditor
 
 
 
-		Assembly GetAssemblyByName( string name )
+		Assembly GetAssemblyByName( string name ) //TODO: find a better way to find the assembly
 		{
 			return AppDomain.CurrentDomain.GetAssemblies().
-				LastOrDefault( assembly => assembly.FullName.StartsWith( "Dynamic.TerryDefense" ) );
+				LastOrDefault( assembly => assembly.FullName.StartsWith( "Dynamic.local.terrydefense" ) );
 		}
 
 		[Sandbox.Event.Hotload]
